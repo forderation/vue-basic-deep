@@ -1,8 +1,15 @@
 <template>
-  <form>
-    <div class="form-control">
+  <form @submit.prevent="submitForm">
+    <div class="form-control" :class="{invalid : userNameValidation === 'invalid'}">
       <label for="user-name">Your Name</label>
-      <input id="user-name" name="user-name" type="text" v-model.trim="userName" />
+      <input
+        id="user-name"
+        name="user-name"
+        type="text"
+        v-model.trim="userName"
+        @blur="validateUserName"
+      />
+      <p v-if="userNameValidation === 'invalid'">Please enter valid username !</p>
     </div>
     <div class="form-control">
       <label for="age">Your Age (Years)</label>
@@ -20,32 +27,57 @@
     <div class="form-control">
       <h2>What are you interested in?</h2>
       <div>
-        <input id="interest-news" name="interest" type="checkbox" />
+        <input
+          id="interest-news"
+          name="interest"
+          type="checkbox"
+          v-model="interest"
+          value="news"
+        />
         <label for="interest-news">News</label>
       </div>
       <div>
-        <input id="interest-tutorials" name="interest" type="checkbox" />
+        <input
+          id="interest-tutorials"
+          name="interest"
+          type="checkbox"
+          v-model="interest"
+          value="tutorials"
+        />
         <label for="interest-tutorials">Tutorials</label>
       </div>
       <div>
-        <input id="interest-nothing" name="interest" type="checkbox" />
+        <input
+          id="interest-nothing"
+          name="interest"
+          type="checkbox"
+          v-model="interest"
+          value="nothing"
+        />
         <label for="interest-nothing">Nothing</label>
       </div>
     </div>
     <div class="form-control">
       <h2>How do you learn?</h2>
       <div>
-        <input id="how-video" name="how" type="radio" />
+        <input id="how-video" name="how" type="radio" value="video" v-model="how"  />
         <label for="how-video">Video Courses</label>
       </div>
       <div>
-        <input id="how-blogs" name="how" type="radio" />
+        <input id="how-blogs" name="how" type="radio" value="blogs" v-model="how" />
         <label for="how-blogs">Blogs</label>
       </div>
       <div>
-        <input id="how-other" name="how" type="radio" />
+        <input id="how-other" name="how" type="radio" value="other" v-model="how" />
         <label for="how-other">Other</label>
       </div>
+    </div>
+    <div class="form-control">
+      <rating-control v-model="rating"></rating-control>
+    </div>
+    <div class="form-control">
+      <input type="checkbox" id="confirm-terms" name="confirm-terms" v-model="confirm">
+      <label for="confirm-terms">Agree to terms of use ?</label>
     </div>
     <div>
       <button>Save Data</button>
@@ -53,15 +85,50 @@
   </form>
 </template>
 <script>
+import RatingControl from "./RatingControl.vue";
+
 export default {
-  data(){
+  components: {RatingControl},
+  data() {
     return {
       userName: null,
       userAge: null,
-      referrer: null
+      referrer: null,
+      interest: [],
+      how: null,
+      confirm: false,
+      rating: null,
+      userNameValidation: 'pending'
+    };
+  },
+  methods: {
+    submitForm() {
+      console.log('Username: ', this.userName);
+      console.log('Age: ', this.userAge);
+      console.log('Refer: ', this.referrer);
+      console.log('Interest: ', this.interest);
+      console.log('How: ', this.how);      
+      console.log('Rating: ', this.rating);
+      console.log('Confirm ?: ', this.confirm);
+      this.userName = null;
+      this.userAge = null;
+      this.referrer = null;
+      this.interest = [];
+      this.rating = null;
+      this.how = null;
+      this.confirm = false;
+    },
+    validateUserName(){
+      if(this.userName === '' || this.userName == null){
+        console.log('invalid');
+        this.userNameValidation = 'invalid';
+      }else{
+        console.log('valid');
+        this.userNameValidation = 'valid';
+      }
     }
-  }
-}
+  },
+};
 </script>
 <style scoped>
 form {
@@ -75,6 +142,14 @@ form {
 
 .form-control {
   margin: 0.5rem 0;
+}
+
+.form-control.invalid p{
+  color: red;
+}
+
+.form-control.invalid input{
+  border-color: red;
 }
 
 label {

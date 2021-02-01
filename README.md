@@ -1,4 +1,4 @@
-# icedupsy
+# VUE
 
 ## Project setup
 ```
